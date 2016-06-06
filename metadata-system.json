@@ -1,0 +1,13 @@
+{
+  "msgs":{
+    "nl":{
+      "bin.edit.confirm.button": "Ja, ik ben zeker"
+    }, "en":{
+      "bin.edit.confirm.button": "Yes, I'm sure"
+    }, "fr":{
+      "bin.edit.confirm.button": "Yes, I'm sure"
+    }, "de":{
+      "bin.edit.confirm.button": "Yes, I'm sure"
+    }
+  }
+}

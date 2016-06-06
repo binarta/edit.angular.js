@@ -1,0 +1,24 @@
+{
+  "name": "binarta.edit.angular",
+  "main": [
+    "./src/edit.js",
+    "./src/edit-tpls-bootstrap3.js",
+    "./metadata-system.json",
+    "./less/edit.less"
+  ],
+  "dependencies": {
+    "angular": "1.5.*",
+    "binarta.notifications.angular": "1.*.*",
+    "binarta.style.guide": "0.*.*"
+  },
+  "devDependencies": {
+    "angular-mocks": "1.5.*"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
