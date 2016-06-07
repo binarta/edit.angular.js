@@ -1,0 +1,6 @@
+{
+  "default": {
+    "bin.edit":"bower_components/binarta.edit.angular/src/edit.js",
+    "bin.edit.templates":"bower_components/binarta.edit.angular/src/edit-tpls-bootstrap3.js"
+  }
+}
