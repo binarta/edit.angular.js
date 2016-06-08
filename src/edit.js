@@ -59,6 +59,8 @@
             }
         };
 
+        self.state = new states.hidden(self);
+
         topics($scope, 'edit.mode', function (editModeActive) {
             self.state = editModeActive ? new states.closed(self) : new states.hidden(self);
         });

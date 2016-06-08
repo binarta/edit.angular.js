@@ -9,6 +9,10 @@ describe('bin.edit module', function () {
             component = $componentController('binEdit');
         }));
 
+        it('component is in hidden state', function () {
+            expect(component.state.name).toEqual('hidden');
+        });
+
         it('register on edit mode event', function () {
             expect(topics.calls.mostRecent().args[1]).toEqual('edit.mode');
         });
