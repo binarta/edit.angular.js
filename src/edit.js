@@ -12,9 +12,7 @@
                 'body': 'binEditBody'
             },
             controller: 'binEditController',
-            template: ['$templateCache', function (cache) {
-                return cache.get('bin-edit.html');
-            }]
+            templateUrl: 'bin-edit.html'
         })
         .component('binEditAction', {
             bindings: {
@@ -26,9 +24,7 @@
             },
             transclude: true,
             controller: 'binEditActionController',
-            template: ['$templateCache', function (cache) {
-                return cache.get('bin-edit-action.html');
-            }]
+            templateUrl: 'bin-edit-action.html'
         });
 
     function BinEditController($scope, topics) {
