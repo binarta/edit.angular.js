@@ -1,7 +1,7 @@
 <div class="bin-edit" ng-class="{open: $ctrl.state.name == 'opened' || $ctrl.state.name == 'confirm'}">
     <div class="bin-edit-header" ng-transclude="header"></div>
     <div style="position: relative">
-        <div class="bin-edit-actions" bin-click-outside="$ctrl.state.close" ng-if="$ctrl.state.name != 'hidden'">
+        <div class="bin-edit-actions" bin-click-outside="$ctrl.close" ng-if="$ctrl.state.name != 'hidden'">
             <div class="ng-hide" ng-show="$ctrl.state.name == 'confirm'">
                 <button type="button" class="btn bin-btn bin-btn-danger bin-btn-floated" ng-click="$ctrl.state.confirm(); $event.stopPropagation();"
                         i18n code="bin.edit.confirm.button" read-only ng-bind="::var">

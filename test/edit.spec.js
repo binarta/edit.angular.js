@@ -25,6 +25,12 @@ describe('bin.edit module', function () {
             it('component is in hidden state', function () {
                 expect(component.state.name).toEqual('hidden');
             });
+
+            it('on close', function () {
+                component.close();
+
+                expect(component.state.name).toEqual('hidden');
+            });
         });
 
         describe('when in edit mode', function () {
@@ -51,7 +57,7 @@ describe('bin.edit module', function () {
 
                 expect(component.state.name).toEqual('opened');
 
-                component.state.close();
+                component.close();
 
                 expect(component.state.name).toEqual('closed');
             });
@@ -101,6 +107,12 @@ describe('bin.edit module', function () {
                         it('component is in closed state', function () {
                             expect(component.state.name).toEqual('closed');
                         });
+                    });
+
+                    it('on close', function () {
+                        component.close();
+
+                        expect(component.state.name).toEqual('closed');
                     });
                 });
             });

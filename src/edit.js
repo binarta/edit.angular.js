@@ -33,12 +33,14 @@
         var states = {
             hidden: function () {
                 this.name = 'hidden';
+                this.close = function () {}
             },
             closed: function (fsm) {
                 this.name = 'closed';
                 this.toggle = function () {
                     fsm.state = new states.opened(fsm);
                 };
+                this.close = function () {}
             },
             opened: function (fsm) {
                 this.name = 'opened';
@@ -55,10 +57,17 @@
                     callback();
                     fsm.state = new states.closed(fsm);
                 };
+                this.close = function () {
+                    fsm.state = new states.closed(fsm);
+                };
             }
         };
 
         self.state = new states.hidden(self);
+
+        this.close = function () {
+            self.state.close();
+        };
 
         topics($scope, 'edit.mode', function (editModeActive) {
             self.state = editModeActive ? new states.closed(self) : new states.hidden(self);
