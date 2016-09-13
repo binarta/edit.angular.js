@@ -51,7 +51,7 @@ describe('bin.edit module', function () {
 
                 expect(component.state.name).toEqual('opened');
 
-                component.close();
+                component.state.close();
 
                 expect(component.state.name).toEqual('closed');
             });

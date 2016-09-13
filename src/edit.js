@@ -45,6 +45,9 @@
                 this.toggle = function () {
                     fsm.state = new states.closed(fsm);
                 };
+                this.close = function () {
+                    fsm.state = new states.closed(fsm);
+                };
             },
             confirm: function (fsm, callback) {
                 this.name = 'confirm';
@@ -61,15 +64,11 @@
             self.state = editModeActive ? new states.closed(self) : new states.hidden(self);
         });
 
-        this.close = function () {
-            self.state = new states.closed(self);
-        };
-
         this.execute = function (args) {
             if (args.context == 'danger') self.state = new states.confirm(self, args.action);
             else {
                 args.action();
-                self.close();
+                self.state = new states.closed(self);
             }
         };
     }
