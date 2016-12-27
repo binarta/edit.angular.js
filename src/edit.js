@@ -1,31 +1,40 @@
 (function () {
     angular.module('bin.edit', ['notifications'])
-        .controller('binEditController', ['$scope', 'ngRegisterTopicHandler', BinEditController])
-        .controller('binEditActionController', [BinEditActionController])
-        .component('binEdit', {
-            bindings: {
-                buttonText: '@'
-            },
-            transclude: {
-                'actions': 'binEditActions',
-                'header': '?binEditHeader',
-                'body': 'binEditBody'
-            },
-            controller: 'binEditController',
-            templateUrl: 'bin-edit.html'
-        })
-        .component('binEditAction', {
-            bindings: {
-                action: '<',
-                context: '@'
-            },
-            require: {
-                editCtrl: '^binEdit'
-            },
-            transclude: true,
-            controller: 'binEditActionController',
-            templateUrl: 'bin-edit-action.html'
-        });
+        .component('binEdit', new BinEditComponent())
+        .component('binEditAction', new BinEditActionComponent());
+
+    function BinEditComponent() {
+        this.templateUrl = 'bin-edit.html';
+        this.bindings = {
+            buttonText: '@'
+        };
+        this.transclude = {
+            'actions': 'binEditActions',
+            'header': '?binEditHeader',
+            'body': 'binEditBody'
+        };
+        this.controller = ['$scope', 'ngRegisterTopicHandler', BinEditController];
+    }
+
+    function BinEditActionComponent() {
+        this.templateUrl = 'bin-edit-action.html';
+        this.bindings = {
+            action: '<',
+            context: '@'
+        };
+        this.require = {
+            editCtrl: '^binEdit'
+        };
+        this.transclude = true;
+
+        this.controller = function () {
+            this.$onInit = function () {
+                this.handler = function () {
+                    this.editCtrl.execute(this);
+                };
+            };
+        };
+    }
 
     function BinEditController($scope, topics) {
         var self = this;
@@ -33,14 +42,16 @@
         var states = {
             hidden: function () {
                 this.name = 'hidden';
-                this.close = function () {}
+                this.close = function () {
+                }
             },
             closed: function (fsm) {
                 this.name = 'closed';
                 this.toggle = function () {
                     fsm.state = new states.opened(fsm);
                 };
-                this.close = function () {}
+                this.close = function () {
+                }
             },
             opened: function (fsm) {
                 this.name = 'opened';
@@ -79,14 +90,6 @@
                 args.action();
                 self.state = new states.closed(self);
             }
-        };
-    }
-
-    function BinEditActionController() {
-        this.$onInit = function () {
-            this.handler = function () {
-                this.editCtrl.execute(this);
-            };
         };
     }
 })();
