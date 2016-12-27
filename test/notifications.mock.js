@@ -1,4 +1,5 @@
 angular.module('notifications', [])
-    .factory('ngRegisterTopicHandler', function () {
-        return jasmine.createSpy('ngRegisterTopicHandler');
+    .service('topicRegistry', function () {
+        this.subscribe = jasmine.createSpy('subscribe');
+        this.unsubscribe = jasmine.createSpy('unsubscribe');
     });

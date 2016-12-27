@@ -13,7 +13,7 @@
             'header': '?binEditHeader',
             'body': 'binEditBody'
         };
-        this.controller = ['$scope', 'ngRegisterTopicHandler', BinEditController];
+        this.controller = ['topicRegistry', BinEditController];
     }
 
     function BinEditActionComponent() {
@@ -36,7 +36,7 @@
         };
     }
 
-    function BinEditController($scope, topics) {
+    function BinEditController(topics) {
         var self = this;
 
         var states = {
@@ -80,16 +80,22 @@
             self.state.close();
         };
 
-        topics($scope, 'edit.mode', function (editModeActive) {
-            self.state = editModeActive ? new states.closed(self) : new states.hidden(self);
-        });
-
         this.execute = function (args) {
             if (args.context == 'danger') self.state = new states.confirm(self, args.action);
             else {
                 args.action();
                 self.state = new states.closed(self);
             }
+        };
+
+        var editModeListener = function (editModeActive) {
+            self.state = editModeActive ? new states.closed(self) : new states.hidden(self);
+        };
+
+        topics.subscribe('edit.mode', editModeListener);
+
+        this.$onDestroy = function () {
+            topics.unsubscribe('edit.mode', editModeListener);
         };
     }
 })();
