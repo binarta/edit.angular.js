@@ -7,6 +7,7 @@ describe('bin.edit module', function () {
         beforeEach(inject(function ($componentController, topicRegistry) {
             topics = topicRegistry;
             $ctrl = $componentController('binEdit');
+            $ctrl.$onInit();
         }));
 
         it('component is in hidden state', function () {

@@ -37,8 +37,7 @@
     }
 
     function BinEditController(topics) {
-        var self = this;
-
+        var $ctrl = this;
         var states = {
             hidden: function () {
                 this.name = 'hidden';
@@ -74,28 +73,30 @@
             }
         };
 
-        self.state = new states.hidden(self);
+        this.$onInit = function () {
+            $ctrl.state = new states.hidden($ctrl);
 
-        this.close = function () {
-            self.state.close();
-        };
+            $ctrl.close = function () {
+                $ctrl.state.close();
+            };
 
-        this.execute = function (args) {
-            if (args.context == 'danger') self.state = new states.confirm(self, args.action);
-            else {
-                args.action();
-                self.state = new states.closed(self);
-            }
-        };
+            $ctrl.execute = function (args) {
+                if (args.context == 'danger') $ctrl.state = new states.confirm($ctrl, args.action);
+                else {
+                    args.action();
+                    $ctrl.state = new states.closed($ctrl);
+                }
+            };
 
-        var editModeListener = function (editModeActive) {
-            self.state = editModeActive ? new states.closed(self) : new states.hidden(self);
-        };
+            var editModeListener = function (editModeActive) {
+                $ctrl.state = editModeActive ? new states.closed($ctrl) : new states.hidden($ctrl);
+            };
 
-        topics.subscribe('edit.mode', editModeListener);
+            topics.subscribe('edit.mode', editModeListener);
 
-        this.$onDestroy = function () {
-            topics.unsubscribe('edit.mode', editModeListener);
+            $ctrl.$onDestroy = function () {
+                topics.unsubscribe('edit.mode', editModeListener);
+            };
         };
     }
 })();
