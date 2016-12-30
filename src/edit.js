@@ -1,6 +1,8 @@
 (function () {
     angular.module('bin.edit', ['notifications'])
         .component('binEdit', new BinEditComponent())
+        .component('binEditActions', new BinEditActionsComponent())
+        .component('binEditActionsSelector', new BinEditActionsSelectorComponent())
         .component('binEditAction', new BinEditActionComponent());
 
     function BinEditComponent() {
@@ -14,6 +16,47 @@
             'body': 'binEditBody'
         };
         this.controller = ['topicRegistry', BinEditController];
+    }
+
+    function BinEditActionsComponent() {
+        this.template = '<div ng-show="$ctrl.visible" ng-transclude></div>';
+        this.bindings = {
+            for: '@'
+        };
+        this.require = {
+            editCtrl: '^binEdit'
+        };
+        this.transclude = true;
+
+        this.controller = function () {
+            var $ctrl = this;
+
+            $ctrl.$onInit = function () {
+                if (!$ctrl.for) $ctrl.visible = true;
+                $ctrl.editCtrl.onShowActionsFor(function (id) {
+                    $ctrl.visible = $ctrl.for == id;
+                });
+            };
+        };
+    }
+
+    function BinEditActionsSelectorComponent() {
+        this.templateUrl = 'bin-edit-action.html';
+        this.bindings = {
+            for: '@'
+        };
+        this.require = {
+            editCtrl: '^binEdit'
+        };
+        this.transclude = true;
+
+        this.controller = function () {
+            this.$onInit = function () {
+                this.execute = function () {
+                    this.editCtrl.showActionsFor(this.for);
+                };
+            };
+        };
     }
 
     function BinEditActionComponent() {
@@ -48,19 +91,19 @@
     function BinEditController(topics) {
         var $ctrl = this;
         var workingListeners = [];
+        var actionsListeners = [];
         var states = {
             hidden: function () {
                 this.name = 'hidden';
-                this.close = function () {
-                }
+                this.close = function () {}
             },
             closed: function (fsm) {
                 this.name = 'closed';
+                $ctrl.showActionsFor();
                 this.toggle = function () {
                     fsm.state = new states.opened(fsm);
                 };
-                this.close = function () {
-                }
+                this.close = function () {}
             },
             opened: function (fsm) {
                 this.name = 'opened';
@@ -74,10 +117,14 @@
         };
 
         this.$onInit = function () {
-            $ctrl.state = new states.hidden($ctrl);
+            $ctrl.state = new states.hidden();
 
             $ctrl.close = function () {
                 $ctrl.state.close();
+            };
+
+            $ctrl.toggle = function () {
+                $ctrl.state.toggle();
             };
 
             $ctrl.onWorking = function (cb) {
@@ -98,8 +145,18 @@
                 });
             };
 
+            $ctrl.showActionsFor = function (id) {
+                actionsListeners.forEach(function (cb) {
+                    cb(id);
+                });
+            };
+
+            $ctrl.onShowActionsFor = function (cb) {
+                actionsListeners.push(cb);
+            };
+
             var editModeListener = function (editModeActive) {
-                $ctrl.state = editModeActive ? new states.closed($ctrl) : new states.hidden($ctrl);
+                $ctrl.state = editModeActive ? new states.closed($ctrl) : new states.hidden();
             };
 
             topics.subscribe('edit.mode', editModeListener);

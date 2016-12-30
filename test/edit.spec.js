@@ -48,13 +48,13 @@ describe('bin.edit module', function () {
 
                 expect($ctrl.state.name).toEqual('opened');
 
-                $ctrl.state.toggle();
+                $ctrl.toggle();
 
                 expect($ctrl.state.name).toEqual('closed');
             });
 
             it('on close', function () {
-                $ctrl.state.toggle();
+                $ctrl.toggle();
 
                 expect($ctrl.state.name).toEqual('opened');
 
@@ -62,37 +62,68 @@ describe('bin.edit module', function () {
 
                 expect($ctrl.state.name).toEqual('closed');
             });
-        });
 
-        it('on start working', function () {
-            $ctrl.startWorking();
-            expect($ctrl.working).toBeTruthy();
-        });
-
-        it('on stop working', function () {
-            $ctrl.startWorking();
-            $ctrl.stopWorking();
-            expect($ctrl.working).toBeFalsy();
-        });
-
-        describe('with working listeners', function () {
-            var isWorking;
-
-            beforeEach(function () {
-                $ctrl.onWorking(function (w) {
-                    isWorking = w;
+            describe('when state is opened', function () {
+                beforeEach(function () {
+                    $ctrl.toggle();
                 });
-            });
 
-            it('on start working', function () {
-                $ctrl.startWorking();
-                expect(isWorking).toBeTruthy();
-            });
+                it('on start working', function () {
+                    $ctrl.startWorking();
+                    expect($ctrl.working).toBeTruthy();
+                });
 
-            it('on stop working', function () {
-                $ctrl.startWorking();
-                $ctrl.stopWorking();
-                expect(isWorking).toBeFalsy();
+                it('on stop working', function () {
+                    $ctrl.startWorking();
+                    $ctrl.stopWorking();
+                    expect($ctrl.working).toBeFalsy();
+                });
+
+                describe('with working listeners', function () {
+                    var isWorking;
+
+                    beforeEach(function () {
+                        $ctrl.onWorking(function (w) {
+                            isWorking = w;
+                        });
+                    });
+
+                    it('on start working', function () {
+                        $ctrl.startWorking();
+                        expect(isWorking).toBeTruthy();
+                    });
+
+                    it('on stop working', function () {
+                        $ctrl.startWorking();
+                        $ctrl.stopWorking();
+                        expect(isWorking).toBeFalsy();
+                    });
+                });
+
+                describe('with actions listeners', function () {
+                    var actionId;
+
+                    beforeEach(function () {
+                        $ctrl.onShowActionsFor(function (id) {
+                            actionId = id;
+                        });
+                    });
+
+                    it('on show actions', function () {
+                        $ctrl.showActionsFor('foo');
+                        expect(actionId).toEqual('foo');
+                    });
+
+                    describe('on close', function () {
+                        beforeEach(function () {
+                            $ctrl.close();
+                        });
+
+                        it('show main actions', function () {
+                            expect(actionId).toBeUndefined();
+                        });
+                    });
+                });
             });
         });
 
@@ -108,20 +139,115 @@ describe('bin.edit module', function () {
         });
     });
 
-    describe('binEditAction component', function () {
-        var $ctrl, $componentController, actionSpy, editCtrl;
+    describe('binEditActions component', function () {
+        var $ctrl, editCtrl;
 
-        beforeEach(inject(function (_$componentController_) {
-            $componentController = _$componentController_;
+        beforeEach(function () {
+            editCtrl = {
+                onShowActionsFor: jasmine.createSpy()
+            };
+        });
+
+        describe('when for is not defined', function () {
+            beforeEach(inject(function ($componentController) {
+                $ctrl = $componentController('binEditActions', null, {});
+                $ctrl.editCtrl = editCtrl;
+                $ctrl.$onInit();
+            }));
+
+            it('actions are visible', function () {
+                expect($ctrl.visible).toBeTruthy();
+            });
+
+            describe('on show other actions', function () {
+                beforeEach(function () {
+                    editCtrl.onShowActionsFor.calls.mostRecent().args[0]('other');
+                });
+
+                it('actions are hidden', function () {
+                    expect($ctrl.visible).toBeFalsy();
+                });
+            });
+
+            describe('on show no specific actions', function () {
+                beforeEach(function () {
+                    editCtrl.onShowActionsFor.calls.mostRecent().args[0]();
+                });
+
+                it('actions are visible', function () {
+                    expect($ctrl.visible).toBeTruthy();
+                });
+            });
+        });
+
+        describe('when for is defined', function () {
+            beforeEach(inject(function ($componentController) {
+                $ctrl = $componentController('binEditActions', null, {
+                    for: 'for'
+                });
+                $ctrl.editCtrl = editCtrl;
+                $ctrl.$onInit();
+            }));
+
+            it('actions are hidden', function () {
+                expect($ctrl.visible).toBeFalsy();
+            });
+
+            describe('on show other actions', function () {
+                beforeEach(function () {
+                    editCtrl.onShowActionsFor.calls.mostRecent().args[0]('other');
+                });
+
+                it('actions are still hidden', function () {
+                    expect($ctrl.visible).toBeFalsy();
+                });
+            });
+
+            describe('on show actions', function () {
+                beforeEach(function () {
+                    editCtrl.onShowActionsFor.calls.mostRecent().args[0]('for');
+                });
+
+                it('actions are visible', function () {
+                    expect($ctrl.visible).toBeTruthy();
+                });
+            });
+        });
+    });
+
+    describe('binEditActionsSelector component', function () {
+        var $ctrl, editCtrl;
+
+        beforeEach(inject(function ($componentController) {
+            $ctrl = $componentController('binEditActionsSelector', null, {
+                for: 'foo'
+            });
+            editCtrl = {
+                showActionsFor: jasmine.createSpy()
+            };
+            $ctrl.editCtrl = editCtrl;
+            $ctrl.$onInit();
+        }));
+
+        it('on execute', function () {
+            $ctrl.execute();
+            expect(editCtrl.showActionsFor).toHaveBeenCalledWith('foo');
+        });
+    });
+
+    describe('binEditAction component', function () {
+        var $ctrl, actionSpy, editCtrl;
+
+        beforeEach(inject(function ($componentController) {
             actionSpy = jasmine.createSpy('action');
             var bindings = {
                 action: actionSpy
             };
             $ctrl = $componentController('binEditAction', null, bindings);
             editCtrl = {
-                onWorking: jasmine.createSpy(''),
-                startWorking: jasmine.createSpy(''),
-                stopWorking: jasmine.createSpy('')
+                onWorking: jasmine.createSpy(),
+                startWorking: jasmine.createSpy(),
+                stopWorking: jasmine.createSpy()
             };
             $ctrl.editCtrl = editCtrl;
             $ctrl.$onInit();
@@ -152,7 +278,7 @@ describe('bin.edit module', function () {
 
                 beforeEach(function () {
                     deferred = {
-                        finally: jasmine.createSpy('')
+                        finally: jasmine.createSpy()
                     };
                     actionSpy.and.returnValue(deferred);
                     $ctrl.execute();
