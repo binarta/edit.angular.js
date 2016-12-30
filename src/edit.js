@@ -42,7 +42,8 @@
     function BinEditActionsSelectorComponent() {
         this.templateUrl = 'bin-edit-action.html';
         this.bindings = {
-            for: '@'
+            for: '@',
+            danger: '@'
         };
         this.require = {
             editCtrl: '^binEdit'
@@ -61,7 +62,8 @@
     function BinEditActionComponent() {
         this.templateUrl = 'bin-edit-action.html';
         this.bindings = {
-            action: '&'
+            action: '&',
+            danger: '@'
         };
         this.require = {
             editCtrl: '^binEdit'
