@@ -25,10 +25,29 @@
             editCtrl: '^binEdit'
         };
         this.transclude = true;
+
+        this.controller = function () {
+            var $ctrl = this;
+
+            $ctrl.$onInit = function () {
+                $ctrl.editCtrl.onWorking(function (isWorking) {
+                    $ctrl.working = isWorking;
+                });
+
+                $ctrl.execute = function () {
+                    var result = $ctrl.action();
+                    if (result && result.finally) {
+                        $ctrl.editCtrl.startWorking();
+                        result.finally($ctrl.editCtrl.stopWorking);
+                    }
+                };
+            };
+        };
     }
 
     function BinEditController(topics) {
         var $ctrl = this;
+        var workingListeners = [];
         var states = {
             hidden: function () {
                 this.name = 'hidden';
@@ -59,6 +78,24 @@
 
             $ctrl.close = function () {
                 $ctrl.state.close();
+            };
+
+            $ctrl.onWorking = function (cb) {
+                workingListeners.push(cb);
+            };
+
+            $ctrl.startWorking = function () {
+                $ctrl.working = true;
+                workingListeners.forEach(function (cb) {
+                    cb(true);
+                });
+            };
+
+            $ctrl.stopWorking = function () {
+                $ctrl.working = false;
+                workingListeners.forEach(function (cb) {
+                    cb(false);
+                });
             };
 
             var editModeListener = function (editModeActive) {

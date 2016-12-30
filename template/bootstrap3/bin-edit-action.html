@@ -1,4 +1,4 @@
 <div class="bin-dropdown-menu-item">
     <button type="button" class="bin-link" ng-class="$ctrl.context ? 'bin-link-' + $ctrl.context : ''"
-            ng-click="$ctrl.action()" ng-transclude></button>
+            ng-click="$ctrl.execute()" ng-disabled="$ctrl.working" ng-transclude></button>
 </div>
