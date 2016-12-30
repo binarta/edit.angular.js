@@ -62,61 +62,6 @@ describe('bin.edit module', function () {
 
                 expect($ctrl.state.name).toEqual('closed');
             });
-
-            describe('on execute', function () {
-                var callback;
-
-                describe('and no need for confirmation', function () {
-                    beforeEach(function () {
-                        callback = jasmine.createSpy();
-                        $ctrl.execute({
-                            action: callback
-                        });
-                    });
-
-                    it('callback is executed', function () {
-                        expect(callback).toHaveBeenCalled();
-                    });
-
-                    it('component is in closed state', function () {
-                        expect($ctrl.state.name).toEqual('closed');
-                    });
-                });
-
-                describe('and needs confirmation', function () {
-                    beforeEach(function () {
-                        callback = jasmine.createSpy();
-                        $ctrl.execute({
-                            action: callback,
-                            context: 'danger'
-                        });
-                    });
-
-                    it('component is in confirm state', function () {
-                        expect($ctrl.state.name).toEqual('confirm');
-                    });
-
-                    describe('when confirmed', function () {
-                        beforeEach(function () {
-                            $ctrl.state.confirm();
-                        });
-
-                        it('callback is executed', function () {
-                            expect(callback).toHaveBeenCalled();
-                        });
-
-                        it('component is in closed state', function () {
-                            expect($ctrl.state.name).toEqual('closed');
-                        });
-                    });
-
-                    it('on close', function () {
-                        $ctrl.close();
-
-                        expect($ctrl.state.name).toEqual('closed');
-                    });
-                });
-            });
         });
 
         describe('on destroy', function () {
@@ -128,31 +73,6 @@ describe('bin.edit module', function () {
                 var listener = topics.subscribe.calls.mostRecent().args[1];
                 expect(topics.unsubscribe).toHaveBeenCalledWith('edit.mode', listener);
             });
-        });
-    });
-
-    describe('binEditAction component', function () {
-        var $ctrl, bindings, $componentController, editCtrl;
-
-        beforeEach(inject(function (_$componentController_) {
-            $componentController = _$componentController_;
-
-            editCtrl = {
-                execute: jasmine.createSpy('execute')
-            }
-        }));
-
-        it('on execute handler', function () {
-            bindings = {
-                action: jasmine.createSpy('action')
-            };
-            $ctrl = $componentController('binEditAction', null, bindings);
-            $ctrl.editCtrl = editCtrl;
-            $ctrl.$onInit();
-
-            $ctrl.handler();
-
-            expect(editCtrl.execute).toHaveBeenCalledWith($ctrl);
         });
     });
 });

@@ -19,21 +19,12 @@
     function BinEditActionComponent() {
         this.templateUrl = 'bin-edit-action.html';
         this.bindings = {
-            action: '<',
-            context: '@'
+            action: '&'
         };
         this.require = {
             editCtrl: '^binEdit'
         };
         this.transclude = true;
-
-        this.controller = function () {
-            this.$onInit = function () {
-                this.handler = function () {
-                    this.editCtrl.execute(this);
-                };
-            };
-        };
     }
 
     function BinEditController(topics) {
@@ -60,16 +51,6 @@
                 this.close = function () {
                     fsm.state = new states.closed(fsm);
                 };
-            },
-            confirm: function (fsm, callback) {
-                this.name = 'confirm';
-                this.confirm = function () {
-                    callback();
-                    fsm.state = new states.closed(fsm);
-                };
-                this.close = function () {
-                    fsm.state = new states.closed(fsm);
-                };
             }
         };
 
@@ -78,14 +59,6 @@
 
             $ctrl.close = function () {
                 $ctrl.state.close();
-            };
-
-            $ctrl.execute = function (args) {
-                if (args.context == 'danger') $ctrl.state = new states.confirm($ctrl, args.action);
-                else {
-                    args.action();
-                    $ctrl.state = new states.closed($ctrl);
-                }
             };
 
             var editModeListener = function (editModeActive) {
