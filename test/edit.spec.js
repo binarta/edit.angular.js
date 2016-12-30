@@ -124,6 +124,11 @@ describe('bin.edit module', function () {
                         });
                     });
                 });
+
+                it('on setButtonCode', function () {
+                    $ctrl.setButtonCode('code');
+                    expect($ctrl.buttonCode).toEqual('code');
+                });
             });
         });
 
@@ -144,7 +149,8 @@ describe('bin.edit module', function () {
 
         beforeEach(function () {
             editCtrl = {
-                onShowActionsFor: jasmine.createSpy()
+                onShowActionsFor: jasmine.createSpy(),
+                setButtonCode: jasmine.createSpy()
             };
         });
 
@@ -176,6 +182,10 @@ describe('bin.edit module', function () {
 
                 it('actions are visible', function () {
                     expect($ctrl.visible).toBeTruthy();
+                });
+
+                it('set button text', function () {
+                    expect(editCtrl.setButtonCode).toHaveBeenCalledWith(undefined);
                 });
             });
         });
@@ -210,6 +220,31 @@ describe('bin.edit module', function () {
 
                 it('actions are visible', function () {
                     expect($ctrl.visible).toBeTruthy();
+                });
+
+                it('set button text', function () {
+                    expect(editCtrl.setButtonCode).toHaveBeenCalledWith(undefined);
+                });
+            });
+        });
+
+        describe('when buttonI18nCode is defined', function () {
+            beforeEach(inject(function ($componentController) {
+                $ctrl = $componentController('binEditActions', null, {
+                    for: 'for',
+                    buttonI18nCode: 'code'
+                });
+                $ctrl.editCtrl = editCtrl;
+                $ctrl.$onInit();
+            }));
+
+            describe('on show actions', function () {
+                beforeEach(function () {
+                    editCtrl.onShowActionsFor.calls.mostRecent().args[0]('for');
+                });
+
+                it('set button text', function () {
+                    expect(editCtrl.setButtonCode).toHaveBeenCalledWith('code');
                 });
             });
         });

@@ -7,9 +7,6 @@
 
     function BinEditComponent() {
         this.templateUrl = 'bin-edit.html';
-        this.bindings = {
-            buttonText: '@'
-        };
         this.transclude = {
             'actions': 'binEditActions',
             'header': '?binEditHeader',
@@ -21,7 +18,8 @@
     function BinEditActionsComponent() {
         this.template = '<div ng-show="$ctrl.visible" ng-transclude></div>';
         this.bindings = {
-            for: '@'
+            for: '@',
+            buttonI18nCode: '@'
         };
         this.require = {
             editCtrl: '^binEdit'
@@ -35,6 +33,7 @@
                 if (!$ctrl.for) $ctrl.visible = true;
                 $ctrl.editCtrl.onShowActionsFor(function (id) {
                     $ctrl.visible = $ctrl.for == id;
+                    if ($ctrl.visible) $ctrl.editCtrl.setButtonCode($ctrl.buttonI18nCode);
                 });
             };
         };
@@ -153,6 +152,10 @@
 
             $ctrl.onShowActionsFor = function (cb) {
                 actionsListeners.push(cb);
+            };
+
+            $ctrl.setButtonCode = function (code) {
+                $ctrl.buttonCode = code;
             };
 
             var editModeListener = function (editModeActive) {
