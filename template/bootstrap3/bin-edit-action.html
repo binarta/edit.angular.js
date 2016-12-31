@@ -1,4 +1,4 @@
 <div class="bin-dropdown-menu-item">
     <button type="button" class="bin-link" ng-class="{'bin-link-danger': $ctrl.danger == ''}"
-            ng-click="$ctrl.execute()" ng-disabled="$ctrl.working" ng-transclude></button>
+            ng-click="$ctrl.execute()" ng-disabled="$ctrl.working || $ctrl.disabled" ng-transclude></button>
 </div>

@@ -63,7 +63,8 @@
         this.templateUrl = 'bin-edit-action.html';
         this.bindings = {
             action: '&',
-            danger: '@'
+            danger: '@',
+            disabled: '<'
         };
         this.require = {
             editCtrl: '^binEdit'
