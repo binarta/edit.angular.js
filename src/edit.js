@@ -83,10 +83,11 @@
                 });
 
                 $ctrl.execute = function () {
-                    var result = $ctrl.action();
-                    if (result && result.finally) {
+                    if (!$ctrl.working && !$ctrl.disabled) {
                         $ctrl.editCtrl.startWorking();
-                        result.finally($ctrl.editCtrl.stopWorking);
+                        var result = $ctrl.action();
+                        if (result && result.finally) result.finally($ctrl.editCtrl.stopWorking);
+                        else $ctrl.editCtrl.stopWorking();
                     }
                 };
             };

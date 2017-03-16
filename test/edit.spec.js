@@ -371,5 +371,37 @@ describe('bin.edit module', function () {
                 });
             });
         });
+
+        describe('when working', function () {
+            beforeEach(function () {
+                $ctrl.working = true;
+            });
+
+            describe('on execute action', function () {
+                beforeEach(function () {
+                    $ctrl.execute();
+                });
+
+                it('is not executed', function () {
+                    expect(actionSpy).not.toHaveBeenCalled();
+                });
+            });
+        });
+
+        describe('when disabled', function () {
+            beforeEach(function () {
+                $ctrl.disabled = true;
+            });
+
+            describe('on execute action', function () {
+                beforeEach(function () {
+                    $ctrl.execute();
+                });
+
+                it('is not executed', function () {
+                    expect(actionSpy).not.toHaveBeenCalled();
+                });
+            });
+        });
     });
 });
