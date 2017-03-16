@@ -132,6 +132,39 @@ describe('bin.edit module', function () {
             });
         });
 
+        describe('with isEditable set to false', function () {
+            beforeEach(function () {
+                $ctrl.isEditable = false;
+                topics.subscribe.calls.mostRecent().args[1](true);
+            });
+
+            it('component is in hidden state', function () {
+                expect($ctrl.state.name).toEqual('hidden');
+            });
+
+            describe('and when isEditable changes', function () {
+                beforeEach(function () {
+                    $ctrl.isEditable = true;
+                    $ctrl.$onChanges();
+                });
+
+                it('component is in hidden state', function () {
+                    expect($ctrl.state.name).toEqual('closed');
+                });
+            });
+        });
+
+        describe('with isEditable set to true', function () {
+            beforeEach(function () {
+                $ctrl.isEditable = true;
+                topics.subscribe.calls.mostRecent().args[1](true);
+            });
+
+            it('component is in hidden state', function () {
+                expect($ctrl.state.name).toEqual('closed');
+            });
+        });
+
         describe('on destroy', function () {
             beforeEach(function () {
                 $ctrl.$onDestroy();

@@ -7,6 +7,9 @@
 
     function BinEditComponent() {
         this.templateUrl = 'bin-edit.html';
+        this.bindings = {
+            isEditable: '<?'
+        };
         this.transclude = {
             'actions': 'binEditActions',
             'header': '?binEditHeader',
@@ -162,7 +165,8 @@
             };
 
             var editModeListener = function (editModeActive) {
-                $ctrl.state = editModeActive ? new states.closed($ctrl) : new states.hidden();
+                $ctrl.editing = editModeActive;
+                initState();
             };
 
             topics.subscribe('edit.mode', editModeListener);
@@ -171,5 +175,17 @@
                 topics.unsubscribe('edit.mode', editModeListener);
             };
         };
+
+        $ctrl.$onChanges = function () {
+            initState();
+        };
+
+        function isEditable() {
+            return $ctrl.editing && ($ctrl.isEditable == undefined || $ctrl.isEditable);
+        }
+
+        function initState() {
+            $ctrl.state = isEditable() ? new states.closed($ctrl) : new states.hidden();
+        }
     }
 })();
