@@ -35,7 +35,7 @@
             $ctrl.$onInit = function () {
                 if (!$ctrl.for) $ctrl.visible = true;
                 $ctrl.editCtrl.onShowActionsFor(function (id) {
-                    $ctrl.visible = $ctrl.for == id;
+                    $ctrl.visible = $ctrl.for === id;
                     if ($ctrl.visible) $ctrl.editCtrl.setButtonCode($ctrl.buttonI18nCode);
                 });
             };
@@ -46,7 +46,9 @@
         this.templateUrl = 'bin-edit-action.html';
         this.bindings = {
             for: '@',
-            danger: '@'
+            danger: '@',
+            iconClass: '@',
+            i18nCode: '@'
         };
         this.require = {
             editCtrl: '^binEdit'
@@ -67,7 +69,9 @@
         this.bindings = {
             action: '&',
             danger: '@',
-            disabled: '<'
+            disabled: '<',
+            iconClass: '@',
+            i18nCode: '@'
         };
         this.require = {
             editCtrl: '^binEdit'
@@ -78,25 +82,31 @@
             var $ctrl = this;
 
             $ctrl.$onInit = function () {
-                $ctrl.editCtrl.onWorking(function (isWorking) {
-                    $ctrl.working = isWorking;
-                });
-
                 $ctrl.execute = function () {
                     if (!$ctrl.working && !$ctrl.disabled) {
-                        $ctrl.editCtrl.startWorking();
                         var result = $ctrl.action();
-                        if (result && result.finally) result.finally($ctrl.editCtrl.stopWorking);
-                        else $ctrl.editCtrl.stopWorking();
+                        if (result && result.finally) {
+                            startWorking();
+                            result.finally(stopWorking);
+                        }
                     }
                 };
             };
+
+            function startWorking() {
+                $ctrl.editCtrl.startWorking();
+                $ctrl.working = true;
+            }
+
+            function stopWorking() {
+                $ctrl.editCtrl.stopWorking();
+                $ctrl.working = false;
+            }
         };
     }
 
     function BinEditController(topics) {
         var $ctrl = this;
-        var workingListeners = [];
         var actionsListeners = [];
         var states = {
             hidden: function () {
@@ -133,22 +143,12 @@
                 $ctrl.state.toggle();
             };
 
-            $ctrl.onWorking = function (cb) {
-                workingListeners.push(cb);
-            };
-
             $ctrl.startWorking = function () {
                 $ctrl.working = true;
-                workingListeners.forEach(function (cb) {
-                    cb(true);
-                });
             };
 
             $ctrl.stopWorking = function () {
                 $ctrl.working = false;
-                workingListeners.forEach(function (cb) {
-                    cb(false);
-                });
             };
 
             $ctrl.showActionsFor = function (id) {
@@ -182,7 +182,7 @@
         };
 
         function isEditable() {
-            return $ctrl.editing && ($ctrl.isEditable == undefined || $ctrl.isEditable);
+            return $ctrl.editing && ($ctrl.isEditable === undefined || $ctrl.isEditable);
         }
 
         function initState() {

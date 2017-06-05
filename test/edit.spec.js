@@ -79,27 +79,6 @@ describe('bin.edit module', function () {
                     expect($ctrl.working).toBeFalsy();
                 });
 
-                describe('with working listeners', function () {
-                    var isWorking;
-
-                    beforeEach(function () {
-                        $ctrl.onWorking(function (w) {
-                            isWorking = w;
-                        });
-                    });
-
-                    it('on start working', function () {
-                        $ctrl.startWorking();
-                        expect(isWorking).toBeTruthy();
-                    });
-
-                    it('on stop working', function () {
-                        $ctrl.startWorking();
-                        $ctrl.stopWorking();
-                        expect(isWorking).toBeFalsy();
-                    });
-                });
-
                 describe('with actions listeners', function () {
                     var actionId;
 
@@ -313,24 +292,12 @@ describe('bin.edit module', function () {
             };
             $ctrl = $componentController('binEditAction', null, bindings);
             editCtrl = {
-                onWorking: jasmine.createSpy(),
                 startWorking: jasmine.createSpy(),
                 stopWorking: jasmine.createSpy()
             };
             $ctrl.editCtrl = editCtrl;
             $ctrl.$onInit();
         }));
-
-        describe('listens on working changes on edit ctrl', function () {
-            it('is not working by default', function () {
-                expect($ctrl.working).toBeFalsy();
-            });
-
-            it('when working', function () {
-                editCtrl.onWorking.calls.mostRecent().args[0](true);
-                expect($ctrl.working).toBeTruthy();
-            });
-        });
 
         describe('on execute action', function () {
             beforeEach(function () {
@@ -357,6 +324,7 @@ describe('bin.edit module', function () {
                 });
 
                 it('is working', function () {
+                    expect($ctrl.working).toBeTruthy();
                     expect($ctrl.editCtrl.startWorking).toHaveBeenCalled();
                 });
 
@@ -366,6 +334,7 @@ describe('bin.edit module', function () {
                     });
 
                     it('is not working', function () {
+                        expect($ctrl.working).toBeFalsy();
                         expect($ctrl.editCtrl.stopWorking).toHaveBeenCalled();
                     });
                 });
