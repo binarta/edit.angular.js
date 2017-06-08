@@ -3,7 +3,7 @@
     <div style="position: relative">
         <div class="bin-edit-actions" bin-click-outside="$ctrl.close()" ng-if="$ctrl.state.name != 'hidden'">
             <div class="bin-dropdown" ng-class="{open: $ctrl.state.name == 'opened'}">
-                <button type="button" class="bin-btn bin-btn-down bin-btn-primary" ng-class="{working: $ctrl.working}"
+                <button type="button" class="bin-btn bin-btn-down bin-btn-sm bin-btn-primary" ng-class="{working: $ctrl.working}"
                         ng-click="$ctrl.toggle()">
                     <span i18n code="{{::$ctrl.buttonCode}}" read-only ng-bind="var" ng-if="$ctrl.buttonCode"></span>
                 </button>
