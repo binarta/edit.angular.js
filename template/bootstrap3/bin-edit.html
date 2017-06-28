@@ -1,8 +1,8 @@
-<div class="bin-edit" ng-class="{open: $ctrl.state.name == 'opened'}">
+<div class="bin-edit" ng-class="{open: $ctrl.state.name === 'opened'}">
     <div class="bin-edit-header" ng-transclude="header"></div>
     <div style="position: relative">
-        <div class="bin-edit-actions" bin-click-outside="$ctrl.close()" ng-if="$ctrl.state.name != 'hidden'">
-            <div class="bin-dropdown" ng-class="{open: $ctrl.state.name == 'opened'}">
+        <div class="bin-edit-actions" bin-click-outside="$ctrl.close()" ng-if="$ctrl.state.name !== 'hidden'">
+            <div class="bin-dropdown" ng-class="{open: $ctrl.state.name == 'opened'}" ng-show="$ctrl.hasMainActions()">
                 <button type="button" class="bin-btn bin-btn-down bin-btn-sm bin-btn-primary" ng-class="{working: $ctrl.working}"
                         ng-click="$ctrl.toggle()">
                     <span i18n code="{{::$ctrl.buttonCode}}" read-only ng-bind="var" ng-if="$ctrl.buttonCode"></span>

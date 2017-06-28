@@ -18,6 +18,7 @@
         this.controller = ['topicRegistry', function (topics) {
             var $ctrl = this;
             var actionsListeners = [];
+            var mainActions = 0;
             var states = {
                 hidden: function () {
                     this.name = 'hidden';
@@ -75,6 +76,18 @@
                     $ctrl.buttonCode = code;
                 };
 
+                $ctrl.increaseMainActionCount = function () {
+                    mainActions += 1;
+                };
+
+                $ctrl.decreaseMainActionCount = function () {
+                    mainActions -= 1;
+                };
+
+                $ctrl.hasMainActions = function () {
+                    return mainActions > 0;
+                };
+
                 var editModeListener = function (editModeActive) {
                     $ctrl.editing = editModeActive;
                     initState();
@@ -108,12 +121,13 @@
             buttonI18nCode: '@'
         };
         this.require = {
-            editCtrl: '^binEdit'
+            editCtrl: '^^binEdit'
         };
         this.transclude = true;
 
         this.controller = function () {
             var $ctrl = this;
+            var actions = [];
 
             $ctrl.$onInit = function () {
                 if (!$ctrl.for) $ctrl.visible = true;
@@ -121,6 +135,14 @@
                     $ctrl.visible = $ctrl.for === id;
                     if ($ctrl.visible) $ctrl.editCtrl.setButtonCode($ctrl.buttonI18nCode);
                 });
+
+                $ctrl.increaseActionCount = function () {
+                    if (!$ctrl.for) $ctrl.editCtrl.increaseMainActionCount();
+                };
+
+                $ctrl.decreaseActionCount = function () {
+                    if (!$ctrl.for) $ctrl.editCtrl.decreaseMainActionCount();
+                };
             };
         };
     }
@@ -134,14 +156,23 @@
             i18nCode: '@'
         };
         this.require = {
-            editCtrl: '^binEdit'
+            editCtrl: '^^binEdit',
+            actionsCtrl: '^^binEditActions'
         };
         this.transclude = true;
 
         this.controller = function () {
-            this.$onInit = function () {
-                this.execute = function () {
-                    this.editCtrl.showActionsFor(this.for);
+            var $ctrl = this;
+            
+            $ctrl.$onInit = function () {
+                $ctrl.actionsCtrl.increaseActionCount();
+                
+                $ctrl.execute = function () {
+                    $ctrl.editCtrl.showActionsFor($ctrl.for);
+                };
+
+                $ctrl.$destroy = function () {
+                    $ctrl.actionsCtrl.decreaseActionCount();
                 };
             };
         };
@@ -157,7 +188,8 @@
             i18nCode: '@'
         };
         this.require = {
-            editCtrl: '^binEdit'
+            editCtrl: '^^binEdit',
+            actionsCtrl: '^^binEditActions'
         };
         this.transclude = true;
 
@@ -165,6 +197,8 @@
             var $ctrl = this;
 
             $ctrl.$onInit = function () {
+                $ctrl.actionsCtrl.increaseActionCount();
+
                 $ctrl.execute = function () {
                     if (!$ctrl.working && !$ctrl.disabled) {
                         var result = $ctrl.action();
@@ -173,6 +207,10 @@
                             result.finally(stopWorking);
                         }
                     }
+                };
+
+                $ctrl.$destroy = function () {
+                    $ctrl.actionsCtrl.decreaseActionCount();
                 };
             };
 

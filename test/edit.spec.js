@@ -144,6 +144,25 @@ describe('bin.edit module', function () {
             });
         });
 
+        it('when no main actions are subscribed', function () {
+            expect($ctrl.hasMainActions()).toBeFalsy();
+        });
+
+        describe('when main actions are subscribed', function () {
+            beforeEach(function () {
+                $ctrl.increaseMainActionCount();
+            });
+
+            it('has main actions to show', function () {
+                expect($ctrl.hasMainActions()).toBeTruthy();
+            });
+
+            it('when main action is unregistered', function () {
+                $ctrl.decreaseMainActionCount();
+                expect($ctrl.hasMainActions()).toBeFalsy();
+            });
+        });
+
         describe('on destroy', function () {
             beforeEach(function () {
                 $ctrl.$onDestroy();
@@ -162,7 +181,9 @@ describe('bin.edit module', function () {
         beforeEach(function () {
             editCtrl = {
                 onShowActionsFor: jasmine.createSpy(),
-                setButtonCode: jasmine.createSpy()
+                setButtonCode: jasmine.createSpy(),
+                increaseMainActionCount: jasmine.createSpy(),
+                decreaseMainActionCount: jasmine.createSpy()
             };
         });
 
@@ -199,6 +220,16 @@ describe('bin.edit module', function () {
                 it('set button text', function () {
                     expect(editCtrl.setButtonCode).toHaveBeenCalledWith(undefined);
                 });
+            });
+
+            it('on increase action count', function () {
+                $ctrl.increaseActionCount();
+                expect(editCtrl.increaseMainActionCount).toHaveBeenCalled();
+            });
+
+            it('on decrease action count', function () {
+                $ctrl.decreaseActionCount();
+                expect(editCtrl.decreaseMainActionCount).toHaveBeenCalled();
             });
         });
 
@@ -238,6 +269,16 @@ describe('bin.edit module', function () {
                     expect(editCtrl.setButtonCode).toHaveBeenCalledWith(undefined);
                 });
             });
+
+            it('on increase action count', function () {
+                $ctrl.increaseActionCount();
+                expect(editCtrl.increaseMainActionCount).not.toHaveBeenCalled();
+            });
+
+            it('on decrease action count', function () {
+                $ctrl.decreaseActionCount();
+                expect(editCtrl.decreaseMainActionCount).not.toHaveBeenCalled();
+            });
         });
 
         describe('when buttonI18nCode is defined', function () {
@@ -263,7 +304,7 @@ describe('bin.edit module', function () {
     });
 
     describe('binEditActionsSelector component', function () {
-        var $ctrl, editCtrl;
+        var $ctrl, editCtrl, actionsCtrl;
 
         beforeEach(inject(function ($componentController) {
             $ctrl = $componentController('binEditActionsSelector', null, {
@@ -272,7 +313,12 @@ describe('bin.edit module', function () {
             editCtrl = {
                 showActionsFor: jasmine.createSpy()
             };
+            actionsCtrl = {
+                increaseActionCount: jasmine.createSpy(),
+                decreaseActionCount: jasmine.createSpy()
+            };
             $ctrl.editCtrl = editCtrl;
+            $ctrl.actionsCtrl = actionsCtrl;
             $ctrl.$onInit();
         }));
 
@@ -280,10 +326,24 @@ describe('bin.edit module', function () {
             $ctrl.execute();
             expect(editCtrl.showActionsFor).toHaveBeenCalledWith('foo');
         });
+
+        it('action is registered to actionsCtrl', function () {
+            expect(actionsCtrl.increaseActionCount).toHaveBeenCalled();
+        });
+
+        describe('on destroy', function () {
+            beforeEach(function () {
+                $ctrl.$destroy();
+            });
+
+            it('action is unregistered', function () {
+                expect(actionsCtrl.decreaseActionCount).toHaveBeenCalled();
+            });
+        });
     });
 
     describe('binEditAction component', function () {
-        var $ctrl, actionSpy, editCtrl;
+        var $ctrl, actionSpy, editCtrl, actionsCtrl;
 
         beforeEach(inject(function ($componentController) {
             actionSpy = jasmine.createSpy('action');
@@ -295,9 +355,18 @@ describe('bin.edit module', function () {
                 startWorking: jasmine.createSpy(),
                 stopWorking: jasmine.createSpy()
             };
+            actionsCtrl = {
+                increaseActionCount: jasmine.createSpy(),
+                decreaseActionCount: jasmine.createSpy()
+            };
             $ctrl.editCtrl = editCtrl;
+            $ctrl.actionsCtrl = actionsCtrl;
             $ctrl.$onInit();
         }));
+
+        it('action is registered to actionsCtrl', function () {
+            expect(actionsCtrl.increaseActionCount).toHaveBeenCalled();
+        });
 
         describe('on execute action', function () {
             beforeEach(function () {
@@ -370,6 +439,16 @@ describe('bin.edit module', function () {
                 it('is not executed', function () {
                     expect(actionSpy).not.toHaveBeenCalled();
                 });
+            });
+        });
+
+        describe('on destroy', function () {
+            beforeEach(function () {
+                $ctrl.$destroy();
+            });
+
+            it('action is unregistered', function () {
+                expect(actionsCtrl.decreaseActionCount).toHaveBeenCalled();
             });
         });
     });
