@@ -1,7 +1,7 @@
 @import "../../binarta.style.guide/less/variables";
 
-.bin-edit {
-  .bin-edit-actions {
+bin-edit {
+  bin-actions {
     position: absolute;
     right: 5px;
     top: 5px;
@@ -20,7 +20,7 @@
   }
 
   &.open {
-    .bin-edit-actions {
+    bin-actions {
       opacity: 1;
       z-index: @bin-z-index-ui + 1;
     }
@@ -29,35 +29,6 @@
       transform: scale(0.99,0.99);
       opacity: 0.3;
       pointer-events: none;
-    }
-
-    .working {
-      &:after {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        width: @bin-btn-min-height-sm;
-
-        border: 8px solid #fff;
-        border-radius: 50%;
-        animation: working 1.0s infinite ease-in-out;
-      }
-
-      @keyframes working {
-        0% {
-          transform: scale(0);
-          opacity: 0;
-        }
-        25% {
-          opacity: 1;
-        }
-        100% {
-          transform: scale(1);
-          opacity: 0;
-        }
-      }
     }
   }
 }
