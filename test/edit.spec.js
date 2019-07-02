@@ -13,8 +13,12 @@ describe('bin.edit module', function () {
             $ctrl.$onInit();
         }));
 
-        it('component is in hidden state', function () {
+        it('component starts out in hidden state', function () {
             expect($ctrl.state.name).toEqual('hidden');
+        });
+
+        it('component does not expose editing class on element', function () {
+            expect(this.$element.hasClass('editing')).toBeFalsy();
         });
 
         it('register on edit mode event', function () {
@@ -28,6 +32,24 @@ describe('bin.edit module', function () {
 
             it('component is in visible state', function () {
                 expect($ctrl.state.name).toEqual('visible');
+            });
+
+            it('component exposes editing class on element', function () {
+                expect(this.$element.hasClass('editing')).toBeTruthy();
+            });
+
+            describe('when leaving edit mode', function() {
+                beforeEach(function() {
+                    topics.subscribe.calls.mostRecent().args[1](false);
+                });
+
+                it('component is in hidden state', function () {
+                    expect($ctrl.state.name).toEqual('hidden');
+                });
+
+                it('component does not expose editing class on element', function () {
+                    expect(this.$element.hasClass('editing')).toBeFalsy();
+                });
             });
         });
 

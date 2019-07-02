@@ -26,6 +26,10 @@
 
             var editModeListener = function (editModeActive) {
                 $ctrl.editing = editModeActive;
+                if($ctrl.editing)
+                    $element.addClass('editing');
+                else
+                    $element.removeClass('editing');
                 initState();
             };
 
